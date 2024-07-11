@@ -5,11 +5,16 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -27,6 +32,10 @@ fun MainScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val query by viewModel.query
+    val uiState by remember {
+        viewModel.uiState
+    }.collectAsState()
 
     Scaffold {
         Column(
@@ -44,27 +53,35 @@ fun MainScreen(
                 modifier = modifier.padding(horizontal = 16.dp)
             ) {
                 SearchBar(
-                    onSubmitted = { query ->
-                        viewModel.searchMovie(query).observe(lifecycleOwner){ search ->
-                            when(search) {
-                                ApiResponse.Loading -> {
-                                    Log.d("MainScreen", "Loading")
-                                }
-                                is ApiResponse.Empty -> {
-                                    Log.d("MainScreen", "Empty")
-
-                                }
-                                is ApiResponse.Error -> {
-                                    Log.d("MainScreen", "Error: ${search.error}")
-                                }
-                                is ApiResponse.Success -> {
-                                    Log.d("MainScreen", "Success: ${search.data}")
-                                }
-                            }
-                        }
-                    },
+                    onSubmitted = viewModel::searchMovie,
                     onClear = {}
                 )
+            }
+            Column(
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                when (uiState) {
+                    ApiResponse.Loading -> {
+                        Text(text = "Loading...")
+                    }
+
+                    is ApiResponse.Empty -> {
+                        Text(text = (uiState as ApiResponse.Empty).message)
+                    }
+
+                    is ApiResponse.Error -> {
+                        val message = (uiState as ApiResponse.Error).error
+                        Text(text = "Error message -> $message")
+                        Log.d("MainScreen", "Error message -> $message")
+                    }
+
+                    is ApiResponse.Success -> {
+                        val data = (uiState as ApiResponse.Success).data
+                        Log.d("MainScreen", "Success data -> $data")
+                    }
+                }
             }
         }
     }
