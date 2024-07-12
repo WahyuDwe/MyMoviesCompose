@@ -6,9 +6,11 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +33,8 @@ fun SearchBar(
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
         value = query,
+        placeholder = { Text("Search Movie") },
+        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
         shape = RoundedCornerShape(16.dp),
         singleLine = true,
         onValueChange = { query = it },

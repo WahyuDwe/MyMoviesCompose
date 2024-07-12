@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,9 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import com.dwi.mymovies.component.SearchBar
+import com.dwi.mymovies.component.SearchItem
 import com.dwi.mymovies.network.ApiResponse
 import org.koin.androidx.compose.koinViewModel
 
@@ -31,7 +35,6 @@ fun MainScreen(
     viewModel: MainViewModel = koinViewModel()
 ) {
     val focusManager = LocalFocusManager.current
-    val lifecycleOwner = LocalLifecycleOwner.current
     val query by viewModel.query
     val uiState by remember {
         viewModel.uiState
@@ -50,7 +53,7 @@ fun MainScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(
-                modifier = modifier.padding(horizontal = 16.dp)
+                modifier = modifier.padding(horizontal = 16.dp, vertical = 16.dp)
             ) {
                 SearchBar(
                     onSubmitted = viewModel::searchMovie,
@@ -58,13 +61,15 @@ fun MainScreen(
                 )
             }
             Column(
-                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 when (uiState) {
                     ApiResponse.Loading -> {
-                        Text(text = "Loading...")
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                     }
 
                     is ApiResponse.Empty -> {
@@ -80,6 +85,11 @@ fun MainScreen(
                     is ApiResponse.Success -> {
                         val data = (uiState as ApiResponse.Success).data
                         Log.d("MainScreen", "Success data -> $data")
+                        LazyColumn {
+                            items(data) { item ->
+                                SearchItem(resultsItem = item)
+                            }
+                        }
                     }
                 }
             }

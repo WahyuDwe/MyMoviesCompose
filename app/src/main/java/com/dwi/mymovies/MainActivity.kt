@@ -13,8 +13,8 @@ import com.dwi.mymovies.ui.theme.MyMoviesTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
         setContent {
             MyMoviesTheme {
                 MainScreen()

@@ -86,6 +86,12 @@ dependencies {
     implementation(libs.okhttp)
     implementation (libs.logging.interceptor)
 
+    // coil
+    implementation(libs.coil.compose)
+
+    // lottie
+    implementation(libs.lottie.compose)
+
 
 
 }
