@@ -31,9 +31,10 @@ fun SearchBar(
     val focusManager = LocalFocusManager.current
 
     OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth(),
         value = query,
-        placeholder = { Text("Search Movie") },
+        placeholder = { Text("Cari filem...") },
         leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
         shape = RoundedCornerShape(16.dp),
         singleLine = true,
@@ -55,5 +56,6 @@ fun SearchBar(
                 }
             }
         },
+
     )
 }

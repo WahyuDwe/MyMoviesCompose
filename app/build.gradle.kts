@@ -91,7 +91,4 @@ dependencies {
 
     // lottie
     implementation(libs.lottie.compose)
-
-
-
 }

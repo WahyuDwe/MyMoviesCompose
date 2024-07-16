@@ -15,12 +15,14 @@ import kotlinx.coroutines.launch
 class MainViewModel(private val remoteDataSource: RemoteDataSource) : ViewModel() {
 
     private val _uiState: MutableStateFlow<ApiResponse<List<MovieResultsItem>>> =
-        MutableStateFlow(ApiResponse.Empty("Start Search"))
+        MutableStateFlow(ApiResponse.Empty("Cari filem kesukaanmu disini..."))
     val uiState: StateFlow<ApiResponse<List<MovieResultsItem>>> = _uiState
 
     private val _query = mutableStateOf("")
     val query: State<String> get() = _query
 
+    private val _isInitial = mutableStateOf(true)
+    val isInitial: State<Boolean> get() = _isInitial
 
     fun searchMovie(query: String) {
         _query.value = query
@@ -33,8 +35,9 @@ class MainViewModel(private val remoteDataSource: RemoteDataSource) : ViewModel(
                     }
                     .collect {
                         if (it.results.isEmpty()) {
+                            _isInitial.value = false
                             _uiState.value =
-                                ApiResponse.Empty("No Result Found for ${_query.value}")
+                                ApiResponse.Empty("Filem yang kamu cari tidak ditemukan, coba cari filem yang lain...")
                         } else {
                             _uiState.value = ApiResponse.Success(it.results)
                         }
